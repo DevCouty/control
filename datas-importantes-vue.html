@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datas Importantes</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #38a169;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .btn-edit {
+            background: #4299e1;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-edit:hover {
+            background: #3182ce;
+        }
+
+        .btn-delete {
+            background: #f56565;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #e53e3e;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online {
+            background: #48bb78;
+        }
+
+        .status-offline {
+            background: #f56565;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-aniversario {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .badge-casamento {
+            background: #fbb6ce;
+            color: #702459;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>📅 Datas Importantes</h1>
+            
+            <div class="header-actions">
+                <div class="api-status">
+                    <span class="status-dot" :class="apiOnline ? 'status-online' : 'status-offline'"></span>
+                    <span>{{ apiOnline ? 'API Conectada' : 'API Offline' }}</span>
+                </div>
+                <button @click="abrirModal()" class="btn btn-primary" :disabled="!apiOnline">
+                    + Nova Data
+                </button>
+            </div>
+
+            <div v-if="erro" class="error-message">
+                {{ erro }}
+            </div>
+
+            <div v-if="carregando" class="loading">
+                <div class="spinner"></div>
+                Carregando...
+            </div>
+
+            <div v-else-if="datas.length === 0" class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>Nenhuma data cadastrada ainda.</p>
+                <p>Clique em "Nova Data" para começar!</p>
+            </div>
+
+            <table v-else>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in datas" :key="item.Id">
+                        <td>{{ item.Id }}</td>
+                        <td>
+                            <span class="badge" :class="'badge-' + item.Tipo">
+                                {{ item.Tipo === 'aniversario' ? '🎂 Aniversário' : '💒 Casamento' }}
+                            </span>
+                        </td>
+                        <td>{{ item.Nome }}</td>
+                        <td>{{ formatarData(item.Data) }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button @click="abrirModal(item)" class="btn btn-edit">
+                                    Editar
+                                </button>
+                                <button @click="excluir(item.Id)" class="btn btn-delete">
+                                    Excluir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal -->
+        <div v-if="modalAberto" class="modal-overlay" @click.self="fecharModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>{{ editando ? 'Editar Data' : 'Nova Data' }}</h2>
+                </div>
+
+                <div v-if="erroForm" class="error-message">
+                    {{ erroForm }}
+                </div>
+
+                <form @submit.prevent="salvar">
+                    <div class="form-group">
+                        <label>Tipo:</label>
+                        <select v-model="form.tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="aniversario">Aniversário</option>
+                            <option value="casamento">Casamento</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nome:</label>
+                        <input 
+                            type="text" 
+                            v-model="form.nome" 
+                            placeholder="Ex: João Silva"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data:</label>
+                        <input 
+                            type="date" 
+                            v-model="form.data" 
+                            required
+                        />
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" @click="fecharModal" class="btn btn-secondary" :disabled="salvando">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success" :disabled="salvando">
+                            {{ salvando ? 'Salvando...' : (editando ? 'Atualizar' : 'Salvar') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        // CONFIGURAÇÃO DA API - Altere aqui a URL da sua API
+        const API_URL = 'http://localhost:3000/api';
+
+        createApp({
+            data() {
+                return {
+                    datas: [],
+                    modalAberto: false,
+                    editando: false,
+                    carregando: false,
+                    salvando: false,
+                    apiOnline: false,
+                    erro: null,
+                    erroForm: null,
+                    form: {
+                        tipo: '',
+                        nome: '',
+                        data: ''
+                    }
+                };
+            },
+            mounted() {
+                this.verificarAPI();
+                this.carregarDatas();
+            },
+            methods: {
+                async verificarAPI() {
+                    try {
+                        const response = await fetch(`${API_URL}/health`);
+                        this.apiOnline = response.ok;
+                    } catch (error) {
+                        this.apiOnline = false;
+                        console.error('API offline:', error);
+                    }
+                },
+
+                async carregarDatas() {
+                    this.carregando = true;
+                    this.erro = null;
+
+                    try {
+                        const response = await fetch(`${API_URL}/datas`);
+                        
+                        if (!response.ok) {
+                            throw new Error('Erro ao carregar dados');
+                        }
+
+                        this.datas = await response.json();
+                        this.apiOnline = true;
+                    } catch (error) {
+                        console.error('Erro ao carregar datas:', error);
+                        this.erro = 'Não foi possível carregar as datas. Verifique se a API está rodando.';
+                        this.apiOnline = false;
+                    } finally {
+                        this.carregando = false;
+                    }
+                },
+
+                abrirModal(item = null) {
+                    if (item) {
+                        this.editando = true;
+                        this.form = {
+                            id: item.Id,
+                            tipo: item.Tipo,
+                            nome: item.Nome,
+                            data: item.Data
+                        };
+                    } else {
+                        this.editando = false;
+                        this.limparForm();
+                    }
+                    this.erroForm = null;
+                    this.modalAberto = true;
+                },
+
+                fecharModal() {
+                    this.modalAberto = false;
+                    this.limparForm();
+                    this.erroForm = null;
+                },
+
+                limparForm() {
+                    this.form = {
+                        tipo: '',
+                        nome: '',
+                        data: ''
+                    };
+                },
+
+                async salvar() {
+                    this.salvando = true;
+                    this.erroForm = null;
+
+                    try {
+                        const dados = {
+                            tipo: this.form.tipo,
+                            nome: this.form.nome,
+                            data: this.form.data
+                        };
+
+                        let response;
+
+                        if (this.editando) {
+                            // Atualizar
+                            response = await fetch(`${API_URL}/datas/${this.form.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(dados)
+                            });
+                        } else {
+                            // Criar
+                            response = await fetch(`${API_URL}/datas`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(dados)
+                            });
+                        }
+
+                        if (!response.ok) {
+                            const erro = await response.json();
+                            throw new Error(erro.erro || 'Erro ao salvar');
+                        }
+
+                        await this.carregarDatas();
+                        this.fecharModal();
+                    } catch (error) {
+                        console.error('Erro ao salvar:', error);
+                        this.erroForm = error.message || 'Erro ao salvar. Tente novamente.';
+                    } finally {
+                        this.salvando = false;
+                    }
+                },
+
+                async excluir(id) {
+                    if (!confirm('Tem certeza que deseja excluir esta data?')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`${API_URL}/datas/${id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erro ao excluir');
+                        }
+
+                        await this.carregarDatas();
+                    } catch (error) {
+                        console.error('Erro ao excluir:', error);
+                        this.erro = 'Erro ao excluir. Tente novamente.';
+                    }
+                },
+
+                formatarData(data) {
+                    const [ano, mes, dia] = data.split('-');
+                    return `${dia}/${mes}/${ano}`;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
